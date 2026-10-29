@@ -8,7 +8,7 @@ export default function Terms() {
         <p className={styles.updated}>Last updated: {new Date().getFullYear()}</p>
         <section>
           <h2>Services</h2>
-          <p>DevDukaan.in provides web development, software development and related digital services. The scope, timeline and cost of each project are agreed upon before work begins.</p>
+          <p>DevDukaan.in provides website, web application, mobile application, software development and related digital services. The scope, timeline and cost of each project are agreed upon before work begins.</p>
         </section>
         <section>
           <h2>Project Agreements</h2>
@@ -28,7 +28,7 @@ export default function Terms() {
         </section>
         <section>
           <h2>Contact</h2>
-          <p>For questions about these terms, contact us at hello@devdukaan.in.</p>
+          <p>For questions about these terms, contact us at devdukaanadmin@gmail.com.</p>
         </section>
         <a href="/" className={styles.back}>← Back to Home</a>
       </div>

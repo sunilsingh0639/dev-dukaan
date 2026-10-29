@@ -1,25 +1,28 @@
-.section { background: #0a1628; padding: 80px 24px; }
+.section { background: #fff; padding: clamp(68px, 8vw, 100px) 24px; }
 .inner { max-width: 1280px; margin: 0 auto; }
-.sectionHead { text-align: center; margin-bottom: 48px; }
+.sectionHead { text-align: center; margin: 0 auto 42px; max-width: 780px; }
 .badge {
   display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 2px;
-  color: #8b5cf6; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3);
+  color: #256bdd; background: #eaf2ff; border: 1px solid #d5e4fb;
   border-radius: 20px; padding: 5px 14px; margin-bottom: 14px;
 }
-.sectionHead h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #f1f5f9; margin: 0 0 12px; }
-.sectionHead p { font-size: 17px; color: #64748b; max-width: 500px; margin: 0 auto; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.sectionHead h2 { font-size: clamp(30px, 4vw, 44px); font-weight: 800; color: #122443; margin: 0 0 13px; letter-spacing: -1.2px; }
+.sectionHead p { font-size: 16px; color: #65748a; max-width: 650px; line-height: 1.7; margin: 0 auto; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 17px; }
+.gridIntro { margin: 0 0 18px; }
+.gridIntro h3 { font-size: 20px; color: #173052; margin: 0 0 5px; }
+.gridIntro p { color: #687990; font-size: 14px; margin: 0; }
 .card {
   display: flex; gap: 16px; align-items: flex-start;
-  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 14px; padding: 22px;
-  transition: border-color 0.2s, transform 0.2s;
+  background: #f7faff; border: 1px solid #e7eef8;
+  border-radius: 15px; padding: 23px;
+  transition: border-color 0.22s, transform 0.22s, box-shadow 0.22s;
 }
-.card:hover { border-color: rgba(59,130,246,0.3); transform: translateY(-2px); }
+.card:hover { border-color: #c1d8fa; transform: translateY(-3px); box-shadow: 0 12px 26px rgba(27,61,111,0.08); }
 .iconWrap {
   width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
-  background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+  background: #e8f1ff; border: 1px solid #d1e2fc;
   display: flex; align-items: center; justify-content: center;
 }
-.card h3 { font-size: 15px; font-weight: 700; color: #f1f5f9; margin: 0 0 6px; }
-.card p { font-size: 13px; color: #64748b; line-height: 1.6; margin: 0; }
+.card h3 { font-size: 15px; font-weight: 750; color: #172d4e; margin: 0 0 6px; }
+.card p { font-size: 13px; color: #66758b; line-height: 1.65; margin: 0; }

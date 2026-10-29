@@ -1,6 +1,7 @@
-import { Mail, Phone, MapPin, Share2 } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import Logo from './Logo';
 import { contact } from '../data/siteData';
+import { scrollToSection } from '../utils/scrollToSection';
 import styles from './Footer.module.css';
 
 const quickLinks = [
@@ -12,23 +13,23 @@ const quickLinks = [
 ];
 
 const serviceLinks = [
-  'Website Development', 'Web Applications', 'E-commerce',
-  'API Development', 'Custom Software', 'Maintenance & Support',
+  'Website Development', 'Web Applications', 'Android & iOS Apps',
+  'E-commerce', 'Custom Software', 'Maintenance & Support',
 ];
 
 export default function Footer() {
   const year = new Date().getFullYear();
   const handleNav = (e, href) => {
     e.preventDefault();
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+    scrollToSection(href);
   };
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.inner}>
+      <div className={styles.inner} data-reveal="stagger">
         <div className={styles.brand}>
           <Logo size="sm" />
-          <p>Building modern, scalable and SEO-friendly digital solutions for businesses across India and beyond.</p>
+          <p>Websites, web applications and Android &amp; iOS apps shaped around your business.</p>
           <div className={styles.social}>
             {contact.instagram && (
               <a href={contact.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -60,7 +61,9 @@ export default function Footer() {
         <div className={styles.col}>
           <h4>Contact</h4>
           <div className={styles.contactList}>
-            <a href={`tel:${contact.phone}`} className={styles.contactRow}><Phone size={14} />{contact.phone}</a>
+            {contact.phone && (
+              <a href={`tel:${contact.phone.international}`} className={styles.contactRow}><Phone size={14} />{contact.phone.display}</a>
+            )}
             <a href={`mailto:${contact.email}`} className={styles.contactRow}><Mail size={14} />{contact.email}</a>
             <div className={styles.contactRow}><MapPin size={14} />{contact.location}</div>
           </div>

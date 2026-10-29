@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
         </section>
         <section>
           <h2>Contact</h2>
-          <p>If you have questions about this privacy policy, please contact us at hello@devdukaan.in.</p>
+          <p>If you have questions about this privacy policy, please contact us at devdukaanadmin@gmail.com.</p>
         </section>
         <a href="/" className={styles.back}>← Back to Home</a>
       </div>

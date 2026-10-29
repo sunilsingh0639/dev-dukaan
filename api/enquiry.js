@@ -1,90 +1,150 @@
-// Netlify / Vercel serverless function — api/enquiry.js
-// Environment variables required (set in hosting dashboard, never in frontend):
-//   TELEGRAM_BOT_TOKEN — your Telegram bot token
-//   TELEGRAM_CHAT_ID   — your Telegram chat/group ID
+import { Buffer } from 'node:buffer';
+import process from 'node:process';
 
-const RATE_LIMIT = new Map(); // in-memory; resets on cold start
+const RATE_LIMIT = new Map();
+const MAX_NAME_LENGTH = 120;
+const MAX_EMAIL_LENGTH = 254;
+const MAX_MOBILE_LENGTH = 40;
+const MAX_DESCRIPTION_LENGTH = 2500;
 
-function escape(text) {
-  return String(text ?? '').replace(/[_*[\]()~`>#+=|{}.!-]/g, '\\$&');
+function response(statusCode, message) {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  };
 }
 
-function buildMessage(d) {
-  return [
-    '*New Enquiry — DevDukaan\\.in*',
-    '',
-    `*Name:* ${escape(d.name)}`,
-    `*Company:* ${escape(d.company || '—')}`,
-    `*Email:* ${escape(d.email)}`,
-    `*Phone:* ${escape(d.phone)}`,
-    `*Service:* ${escape(d.service)}`,
-    `*Budget:* ${escape(d.budget || '—')}`,
-    `*Timeline:* ${escape(d.timeline || '—')}`,
-    `*Contact Preference:* ${escape(d.contactPreference || '—')}`,
-    `*Project Details:* ${escape(d.description)}`,
-    `*Source Page:* ${escape(d.sourcePage)}`,
-    `*Submitted At:* ${escape(d.submittedAt)}`,
-  ].join('\n');
-}
-
-function validate(d) {
-  if (!d.name?.trim()) return 'Name is required.';
-  if (!d.email?.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return 'Valid email is required.';
-  if (!d.phone?.match(/^\+?[\d\s\-()]{7,15}$/)) return 'Valid phone number is required.';
-  if (!d.service?.trim()) return 'Service selection is required.';
-  if (!d.description?.trim()) return 'Project description is required.';
+function validate(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    return 'Please provide valid enquiry details.';
+  }
+  if (typeof data.name !== 'string' || !data.name.trim() || data.name.length > MAX_NAME_LENGTH) {
+    return 'Enter a name of 1 to 120 characters.';
+  }
+  if (
+    typeof data.email !== 'string' ||
+    data.email.length > MAX_EMAIL_LENGTH ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())
+  ) {
+    return 'Enter a valid email address.';
+  }
+  if (typeof data.mobile !== 'string' || data.mobile.length > MAX_MOBILE_LENGTH) {
+    return 'Enter a valid mobile number.';
+  }
+  const mobileDigits = data.mobile.replace(/\D/g, '').length;
+  if (!/^\+?[\d\s().-]+$/.test(data.mobile.trim()) || mobileDigits < 7 || mobileDigits > 15) {
+    return 'Enter a valid mobile number.';
+  }
+  if (
+    typeof data.description !== 'string' ||
+    !data.description.trim() ||
+    data.description.length > MAX_DESCRIPTION_LENGTH
+  ) {
+    return 'Enter a project description of 1 to 3000 characters.';
+  }
   return null;
 }
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed.' });
+function buildMessage(data, sourcePage) {
+  let pageUrl = 'Not provided';
+  if (typeof sourcePage === 'string') {
+    try {
+      const parsedUrl = new URL(sourcePage);
+      if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') {
+        pageUrl = parsedUrl.href.slice(0, 512);
+      }
+    } catch {
+      pageUrl = 'Not provided';
+    }
   }
+  const cleanText = value => value.trim().replace(/[\r\n]+/g, ' ');
 
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || 'unknown';
+  return [
+    'New Enquiry — DevDukaan.in',
+    '',
+    `Name: ${cleanText(data.name)}`,
+    `Email: ${cleanText(data.email)}`,
+    `Mobile: ${cleanText(data.mobile)}`,
+    `Description: ${cleanText(data.description)}`,
+    `Page: ${pageUrl}`,
+    `Submitted At: ${new Date().toISOString()}`,
+  ].join('\n');
+}
+
+function isRateLimited(ip) {
   const now = Date.now();
-  const windowMs = 60_000;
-  const maxRequests = 3;
-
-  const entry = RATE_LIMIT.get(ip) || { count: 0, start: now };
-  if (now - entry.start > windowMs) {
-    entry.count = 0;
-    entry.start = now;
-  }
-  entry.count++;
-  RATE_LIMIT.set(ip, entry);
-
-  if (entry.count > maxRequests) {
-    return res.status(429).json({ message: 'Too many requests. Please wait a moment.' });
+  const entry = RATE_LIMIT.get(ip);
+  if (!entry || now - entry.start >= 60_000) {
+    RATE_LIMIT.set(ip, { count: 1, start: now });
+    return false;
   }
 
-  const data = req.body;
-  const error = validate(data);
-  if (error) return res.status(400).json({ message: error });
+  entry.count += 1;
+  return entry.count > 3;
+}
+
+export async function handler(event) {
+  if (event.httpMethod !== 'POST') {
+    return response(405, 'Method not allowed.');
+  }
+
+  const ip = event.headers?.['x-nf-client-connection-ip'] ||
+    event.headers?.['x-forwarded-for']?.split(',')[0] ||
+    'unknown';
+  if (isRateLimited(ip)) {
+    return response(429, 'Too many requests. Please wait a moment.');
+  }
+
+  let data;
+  try {
+    const body = event.isBase64Encoded
+      ? Buffer.from(event.body || '', 'base64').toString('utf8')
+      : event.body;
+    if (typeof body !== 'string') return response(400, 'Please provide valid enquiry details.');
+    if (body.length > 5000) return response(413, 'Enquiry details are too large.');
+    data = JSON.parse(body || '');
+  } catch {
+    return response(400, 'Please provide valid enquiry details.');
+  }
+
+  const validationError = validate(data);
+  if (validationError) return response(400, validationError);
 
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-
   if (!token || !chatId) {
-    console.error('Telegram credentials not configured.');
-    return res.status(500).json({ message: 'Server configuration error.' });
+    console.error('Telegram credentials are not configured.');
+    return response(500, 'Enquiry delivery is not configured. Please try again later.');
   }
 
-  const telegramRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: buildMessage(data),
-      parse_mode: 'MarkdownV2',
-    }),
-  });
-
-  if (!telegramRes.ok) {
-    const err = await telegramRes.json().catch(() => ({}));
-    console.error('Telegram API error:', err);
-    return res.status(502).json({ message: 'Failed to deliver enquiry. Please try again.' });
+  let telegramResponse;
+  try {
+    telegramResponse = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: buildMessage(data, data.sourcePage),
+      }),
+    });
+  } catch (error) {
+    console.error('Unable to reach the Telegram API:', error);
+    return response(502, 'We could not deliver your enquiry. Please try again.');
   }
 
-  return res.status(200).json({ message: 'Enquiry submitted successfully.' });
+  let telegramResult;
+  try {
+    telegramResult = await telegramResponse.json();
+  } catch (error) {
+    console.error('Telegram API returned an invalid response:', error);
+    return response(502, 'We could not deliver your enquiry. Please try again.');
+  }
+
+  if (!telegramResponse.ok || !telegramResult || telegramResult.ok !== true) {
+    console.error('Telegram API rejected the enquiry:', telegramResult);
+    return response(502, 'We could not deliver your enquiry. Please try again.');
+  }
+
+  return response(200, 'Enquiry submitted successfully.');
 }

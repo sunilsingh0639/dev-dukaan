@@ -1,11 +1,15 @@
 export const faqs = [
   {
     q: 'What types of websites does DevDukaan build?',
-    a: 'We build business websites, landing pages, corporate websites, portfolio websites, e-commerce stores, web applications, admin panels and custom software solutions tailored to your specific requirements.',
+    a: 'We build business websites, landing pages, e-commerce websites, custom web applications and Android and iOS mobile applications tailored to your requirements.',
   },
   {
     q: 'Do you develop custom web applications?',
-    a: 'Yes. We develop custom web applications including dashboards, business portals, workflow tools and internal management systems using modern technologies like React, Java and Spring Boot.',
+    a: 'Yes. Web applications run in a browser and can include dashboards, business portals, workflow tools and internal management systems. They are distinct from native mobile apps.',
+  },
+  {
+    q: 'Do you develop Android and iOS mobile apps?',
+    a: 'Yes. We develop mobile applications for Android and iOS, including cross-platform options such as Flutter or React Native when they suit the project.',
   },
   {
     q: 'Will my website work on mobile devices?',
@@ -29,49 +33,84 @@ export const faqs = [
   },
   {
     q: 'How do I contact DevDukaan for a new project?',
-    a: 'You can reach us through the contact form on this page, via email, WhatsApp or Telegram. We typically respond within one business day.',
+    a: 'Use the enquiry form on this page or email devdukaanadmin@gmail.com to discuss your project.',
   },
 ];
 
 export const technologies = {
   Frontend: [
-    { name: 'React', icon: '⚛️' },
-    { name: 'Angular', icon: '🅰️' },
-    { name: 'HTML5', icon: '🌐' },
-    { name: 'CSS3', icon: '🎨' },
-    { name: 'JavaScript', icon: '🟨' },
-    { name: 'TypeScript', icon: '🔷' },
+    { name: 'HTML5', mark: '5', color: '#e65b35', enabled: true },
+    { name: 'CSS3', mark: '3', color: '#3479c7', enabled: true },
+    { name: 'JavaScript', mark: 'JS', color: '#bc9200', enabled: true },
+    { name: 'TypeScript', mark: 'TS', color: '#3178c6', enabled: true },
+    { name: 'React', mark: 'R', color: '#16b9d4', enabled: true },
+    { name: 'Angular', mark: 'A', color: '#dd2547', enabled: true },
+    { name: 'Vue.js', mark: 'V', color: '#42a779', enabled: true },
+    { name: 'Next.js', mark: 'N', color: '#111827', enabled: true },
+    { name: 'Nuxt.js', mark: 'N', color: '#25a880', enabled: true },
+    { name: 'Svelte', mark: 'S', color: '#ed5b38', enabled: true },
+    { name: 'Bootstrap', mark: 'B', color: '#7952b3', enabled: true },
+    { name: 'Tailwind CSS', mark: 'T', color: '#20a6bd', enabled: true },
   ],
   Backend: [
-    { name: 'Java', icon: '☕' },
-    { name: 'Spring Boot', icon: '🍃' },
-    { name: 'Python', icon: '🐍' },
-    { name: 'FastAPI', icon: '⚡' },
-    { name: 'Node.js', icon: '🟢' },
+    { name: 'PHP', mark: 'PHP', color: '#777bb4', enabled: true },
+    { name: 'Laravel', mark: 'L', color: '#ef4c49', enabled: true },
+    { name: 'Node.js', mark: 'JS', color: '#538b45', enabled: true },
+    { name: 'Express.js', mark: 'Ex', color: '#414a5a', enabled: true },
+    { name: 'Java', mark: 'J', color: '#e76d2d', enabled: true },
+    { name: 'Spring Boot', mark: 'S', color: '#62a448', enabled: true },
+    { name: 'Python', mark: 'Py', color: '#4178a8', enabled: true },
+    { name: 'Django', mark: 'D', color: '#176a54', enabled: true },
+    { name: 'FastAPI', mark: 'F', color: '#149c99', enabled: true },
+    { name: 'ASP.NET Core', mark: '.N', color: '#6544b5', enabled: true },
+    { name: 'C#', mark: 'C#', color: '#733b9b', enabled: true },
   ],
-  Database: [
-    { name: 'PostgreSQL', icon: '🐘' },
-    { name: 'MySQL', icon: '🗄️' },
-    { name: 'SQL Server', icon: '💾' },
-    { name: 'MongoDB', icon: '🍃' },
+  'CMS & E-commerce': [
+    { name: 'WordPress', mark: 'W', color: '#28799b', enabled: true },
+    { name: 'WooCommerce', mark: 'W', color: '#8055a6', enabled: true },
+    { name: 'Shopify', mark: 'S', color: '#77a641', enabled: true },
+    { name: 'Magento / Adobe Commerce', mark: 'M', color: '#e76535', enabled: true },
   ],
-  Deployment: [
-    { name: 'Netlify', icon: '🚀' },
-    { name: 'Vercel', icon: '▲' },
-    { name: 'AWS', icon: '☁️' },
-    { name: 'Docker', icon: '🐳' },
+  Databases: [
+    { name: 'MySQL', mark: 'My', color: '#36749a', enabled: true },
+    { name: 'PostgreSQL', mark: 'Pg', color: '#3e6d93', enabled: true },
+    { name: 'Microsoft SQL Server', mark: 'SQL', color: '#c84848', enabled: true },
+    { name: 'MongoDB', mark: 'M', color: '#4c9862', enabled: true },
+    { name: 'Redis', mark: 'R', color: '#ce443e', enabled: true },
+  ],
+  'APIs & Integrations': [
+    { name: 'REST APIs', mark: 'REST', color: '#3478d2', enabled: true },
+    { name: 'GraphQL', mark: 'GQL', color: '#c5539a', enabled: true },
+    { name: 'Webhooks', mark: '↗', color: '#7159bd', enabled: true },
+    { name: 'Third-party integrations', mark: 'API', color: '#248eae', enabled: true },
+  ],
+  'Mobile Apps': [
+    { name: 'Flutter', mark: 'F', color: '#3b9bea', enabled: true },
+    { name: 'React Native', mark: 'R', color: '#16b9d4', enabled: true },
+    { name: 'Kotlin', mark: 'K', color: '#7f52ff', enabled: true },
+    { name: 'Swift', mark: 'S', color: '#f05138', enabled: true },
+    { name: 'Ionic', mark: 'I', color: '#4a79d6', enabled: true },
+  ],
+  'Cloud & Deployment': [
+    { name: 'AWS', mark: 'AWS', color: '#d58a26', enabled: true },
+    { name: 'Microsoft Azure', mark: 'Az', color: '#287fca', enabled: true },
+    { name: 'Google Cloud', mark: 'G', color: '#4c87ce', enabled: true },
+    { name: 'Docker', mark: 'D', color: '#2186c3', enabled: true },
+    { name: 'Git', mark: 'Git', color: '#e05c3c', enabled: true },
+    { name: 'GitHub', mark: 'GH', color: '#343b4b', enabled: true },
+    { name: 'CI/CD', mark: 'CI', color: '#556e9b', enabled: true },
+    { name: 'Netlify', mark: 'N', color: '#2a9e9a', enabled: true },
+    { name: 'Vercel', mark: '▲', color: '#222b3c', enabled: true },
   ],
 };
 
 export const whyUs = [
-  { icon: 'Puzzle', title: 'Custom Solutions', desc: 'Built around your business requirements, not generic templates.' },
-  { icon: 'MessageSquare', title: 'Direct Communication', desc: 'Clear communication and a defined point of contact throughout.' },
-  { icon: 'Shield', title: 'Secure & Scalable', desc: 'Architecture designed for maintainability and future growth.' },
-  { icon: 'Smartphone', title: 'Responsive Design', desc: 'Optimized for desktop, tablet and mobile at every breakpoint.' },
-  { icon: 'Zap', title: 'Performance Focused', desc: 'Fast-loading pages and efficient implementation as standard.' },
-  { icon: 'Clock', title: 'On-Time Delivery', desc: 'Clear milestones and realistic timelines for every project.' },
-  { icon: 'DollarSign', title: 'Transparent Pricing', desc: 'Estimates based on your actual requirements, no hidden costs.' },
-  { icon: 'HeartHandshake', title: 'Project Support', desc: 'Assistance after launch according to the agreed scope.' },
+  { icon: 'Puzzle', title: 'Custom Development', desc: 'Websites, web applications and mobile apps shaped around your requirements.' },
+  { icon: 'Smartphone', title: 'Responsive Experiences', desc: 'Interfaces designed for mobile, tablet and desktop screens.' },
+  { icon: 'Shield', title: 'Security in Mind', desc: 'Security considerations included throughout design and development.' },
+  { icon: 'Layers', title: 'Scalable Architecture', desc: 'Maintainable foundations that can evolve with your product and workflows.' },
+  { icon: 'Zap', title: 'Performance Focus', desc: 'Attention to loading speed and a smooth experience across devices.' },
+  { icon: 'HeartHandshake', title: 'Ongoing Support', desc: 'Post-launch assistance based on the scope agreed for your project.' },
 ];
 
 export const processSteps = [
@@ -91,11 +130,17 @@ export const navLinks = [
   { label: 'Contact Us', href: '#contact' },
 ];
 
+const nationalPhoneNumber = '8000632162';
+const countryDialingCode = '91';
+
 export const contact = {
-  phone: '+91-XXXXXXXXXX',
-  email: 'hello@devdukaan.in',
-  whatsapp: null,
+  phone: {
+    display: nationalPhoneNumber,
+    international: `+${countryDialingCode}${nationalPhoneNumber}`,
+    whatsapp: `${countryDialingCode}${nationalPhoneNumber}`,
+  },
+  email: 'devdukaanadmin@gmail.com',
   location: 'Jaipur, Rajasthan, India',
-  instagram: 'https://instagram.com/devdukaan.in',
+  instagram: 'https://instagram.com/devdukaan',
   linkedin: null,
 };

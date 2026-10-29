@@ -1,4 +1,4 @@
-const ENDPOINT = import.meta.env.VITE_ENQUIRY_ENDPOINT || '/api/enquiry';
+const ENDPOINT = import.meta.env.VITE_ENQUIRY_ENDPOINT || '/.netlify/functions/enquiry';
 
 export async function submitEnquiry(data) {
   const res = await fetch(ENDPOINT, {
@@ -7,12 +7,16 @@ export async function submitEnquiry(data) {
     body: JSON.stringify({
       ...data,
       sourcePage: window.location.href,
-      submittedAt: new Date().toISOString(),
     }),
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || 'Submission failed. Please try again.');
+  let result;
+  try {
+    result = await res.json();
+  } catch {
+    throw new Error('The server returned an invalid response. Please try again.');
   }
-  return res.json();
+  if (!res.ok) {
+    throw new Error(result.message || 'Submission failed. Please try again.');
+  }
+  return result;
 }

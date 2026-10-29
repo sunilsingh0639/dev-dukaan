@@ -8,19 +8,21 @@ export default function FAQSection() {
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
-        <div className={styles.sectionHead}>
+        <div className={styles.sectionHead} data-reveal>
           <span className={styles.badge}>FAQ</span>
           <h2>Frequently Asked Questions</h2>
           <p>Common questions about our services and how we work.</p>
         </div>
-        <div className={styles.list}>
+        <div className={styles.list} data-reveal="stagger">
           {faqs.map((faq, i) => (
             <div key={i} className={`${styles.item} ${open === i ? styles.itemOpen : ''}`}>
-              <button className={styles.question} onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i}>
+              <button id={`faq-${i}-question`} className={styles.question} onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i} aria-controls={`faq-${i}-answer`}>
                 <span>{faq.q}</span>
                 <ChevronDown size={18} className={styles.chevron} />
               </button>
-              {open === i && <div className={styles.answer}>{faq.a}</div>}
+              <div id={`faq-${i}-answer`} className={styles.answer} role="region" aria-labelledby={`faq-${i}-question`} hidden={open !== i}>
+                {faq.a}
+              </div>
             </div>
           ))}
         </div>

@@ -1,16 +1,23 @@
-# React + Vite
+# DevDukaan.in
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+DevDukaan.in is a responsive agency website built with React and Vite. Its enquiry forms share client-side validation and submit through a Netlify Function to a configured Telegram chat.
 
-Currently, two official plugins are available:
+## Local development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```sh
+npm install
+npm run dev
+```
 
-## React Compiler
+To exercise the enquiry function locally, install the Netlify CLI and run `netlify dev`. The function reads `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` from the server environment. Configure these values in the local Netlify environment or deployment dashboard; never add real credentials to frontend variables or commit them.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The production form endpoint is `/.netlify/functions/enquiry`. `VITE_ENQUIRY_ENDPOINT` may be set to override it when using a compatible serverless deployment.
 
-## Expanding the ESLint configuration
+## Checks
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```sh
+npm run lint
+npm run build
+```
+
+The first-visit enquiry popup is delayed by five seconds and records its shown state in browser `localStorage`. Scroll-triggered reveals and decorative motion respect the user's reduced-motion preference.

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from './components/Header';
 import HeroSection from './components/HeroSection';
 import ServicesSection from './components/ServicesSection';
@@ -21,6 +21,31 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const path = window.location.pathname;
 
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const elements = document.querySelectorAll('[data-reveal]');
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach(element => element.classList.add('is-visible'));
+      return undefined;
+    }
+
+    document.documentElement.classList.add('motion-ready');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -36px 0px' });
+
+    elements.forEach(element => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove('motion-ready');
+    };
+  }, []);
+
   if (path === '/privacy-policy') return <PrivacyPolicy />;
   if (path === '/terms') return <Terms />;
 
@@ -35,14 +60,14 @@ export default function App() {
         <TechnologiesSection />
         <DevelopmentProcessSection />
         <ClientsSection />
-        <TestimonialsSection />
+        <TestimonialsSection onQuote={() => setModalOpen(true)} />
         <FAQSection />
         <ContactSection />
       </main>
       <Footer />
       <EnquiryModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
       <EnquiryPopup modalOpen={modalOpen} />
-      <FloatingWhatsAppButton />
+      <FloatingWhatsAppButton modalOpen={modalOpen} />
     </>
   );
 }

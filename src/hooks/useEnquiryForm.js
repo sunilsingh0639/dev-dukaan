@@ -1,20 +1,24 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { submitEnquiry } from '../services/enquiry';
 
 const INITIAL = {
-  name: '', company: '', email: '', phone: '',
-  service: '', budget: '', timeline: '', description: '',
-  contactPreference: '', consent: false,
+  name: '',
+  email: '',
+  mobile: '',
+  description: '',
 };
 
 function validate(f) {
   const e = {};
-  if (!f.name.trim()) e.name = 'Full name is required.';
-  if (!f.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) e.email = 'Valid email is required.';
-  if (!f.phone.match(/^\+?[\d\s\-()]{7,15}$/)) e.phone = 'Valid phone number is required.';
-  if (!f.service) e.service = 'Please select a service.';
+  if (!f.name.trim()) e.name = 'Name is required.';
+  if (f.email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) {
+    e.email = 'Enter a valid email address.';
+  }
+  const mobileDigits = f.mobile.replace(/\D/g, '').length;
+  if (!/^\+?[\d\s().-]+$/.test(f.mobile.trim()) || mobileDigits < 7 || mobileDigits > 15) {
+    e.mobile = 'Enter a valid mobile number.';
+  }
   if (!f.description.trim()) e.description = 'Project description is required.';
-  if (!f.consent) e.consent = 'Please accept the privacy policy.';
   return e;
 }
 
@@ -23,35 +27,40 @@ export function useEnquiryForm(onSuccess) {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [serverError, setServerError] = useState('');
+  const submitting = useRef(false);
 
   const handleChange = useCallback((e) => {
-    const { name, value, type, checked } = e.target;
-    setFields(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    const { name, value } = e.target;
+    setFields(prev => ({ ...prev, [name]: value }));
     setErrors(prev => ({ ...prev, [name]: undefined }));
+    setServerError('');
   }, []);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (submitting.current) return;
     const errs = validate(fields);
     if (Object.keys(errs).length) { setErrors(errs); return; }
+    submitting.current = true;
     setStatus('loading');
     setServerError('');
     try {
-      await submitEnquiry(fields);
+      await submitEnquiry({
+        name: fields.name.trim(),
+        email: fields.email.trim(),
+        mobile: fields.mobile.trim(),
+        description: fields.description.trim(),
+      });
       setStatus('success');
       setFields(INITIAL);
       onSuccess?.();
     } catch (err) {
       setStatus('error');
-      setServerError(err.message);
+      setServerError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
+    } finally {
+      submitting.current = false;
     }
   }, [fields, onSuccess]);
 
-  const reset = useCallback(() => {
-    setStatus('idle');
-    setServerError('');
-    setErrors({});
-  }, []);
-
-  return { fields, errors, status, serverError, handleChange, handleSubmit, reset };
+  return { fields, errors, status, serverError, handleChange, handleSubmit };
 }
